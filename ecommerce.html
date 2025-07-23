@@ -28,7 +28,7 @@
     </nav>
 
     <!-- Hero Section -->
-    <header class="hero">
+    <header class="hero section" id="home">
         <div class="hero-content">
             <h1>Summer Collection 2024</h1>
             <p>Discover the latest trends in fashion</p>
@@ -37,7 +37,7 @@
     </header>
 
     <!-- Trending Section -->
-    <section class="trending">
+    <section class="trending section" id="products">
         <h2>Trending Now</h2>
         <div class="product-grid">
             <!-- Trending Item 1 -->
@@ -103,7 +103,7 @@
     </section>
 
     <!-- Categories Section -->
-    <section class="categories">
+    <section class="categories section" id="photos">
         <h2>Shop by Category</h2>
         <div class="category-grid">
             <div class="category-card">
@@ -122,7 +122,7 @@
     </section>
 
     <!-- Newsletter Section -->
-    <section class="newsletter">
+    <section class="newsletter section" id="about">
         <div class="newsletter-content">
             <h2>Subscribe to Our Newsletter</h2>
             <p>Get the latest updates on new products and upcoming sales</p>
@@ -132,6 +132,54 @@
             </form>
         </div>
     </section>
+
+    <!-- Contact Section -->
+    <section class="section" id="contact" style="padding: 4rem 5%; background: #f4f4f4;">
+        <h2>Contact Us</h2>
+        <form style="max-width: 500px; margin: 2rem auto 0; display: flex; flex-direction: column; gap: 1rem;">
+            <input type="text" placeholder="Your Name" required>
+            <input type="email" placeholder="Your Email" required>
+            <textarea placeholder="Your Message" rows="5" required></textarea>
+            <button type="submit" style="background: #3498db; color: white; border: none; padding: 1rem; border-radius: 5px; cursor: pointer;">Send Message</button>
+        </form>
+    </section>
+
+    <!-- Account Profile Modal -->
+    <div id="account-modal" class="modal-overlay">
+        <div class="modal-content">
+            <button class="modal-close" id="close-account-modal">&times;</button>
+            <section class="section" id="account" style="padding: 4rem 5%; background: #f9f9f9;">
+                <h2>User Account Profile</h2>
+                <div style="max-width: 400px; margin: 2rem auto 0; background: #fff; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.07); padding: 2rem;">
+                    <div style="text-align: center; margin-bottom: 1.5rem;">
+                        <i class="fas fa-user" style="font-size: 3rem; color: #3498db;"></i>
+                    </div>
+                    <div style="margin-bottom: 1rem;">
+                        <strong>Name:</strong> John Doe
+                    </div>
+                    <div style="margin-bottom: 1rem;">
+                        <strong>Email:</strong> johndoe@example.com
+                    </div>
+                    <div style="margin-bottom: 1rem;">
+                        <strong>Member Since:</strong> January 2023
+                    </div>
+                    <button style="background: #3498db; color: white; border: none; padding: 0.8rem 1.5rem; border-radius: 5px; cursor: pointer;">Edit Profile</button>
+                </div>
+            </section>
+        </div>
+    </div>
+
+    <!-- Cart Modal -->
+    <div id="cart-modal" class="modal-overlay">
+        <div class="modal-content">
+            <button class="modal-close" id="close-cart-modal">&times;</button>
+            <section class="section" id="cart" style="padding: 4rem 5%; background: #f4f4f4;">
+                <h2>Your Cart</h2>
+                <div id="cart-items"></div>
+                <div id="cart-total" style="margin-top: 2rem; font-size: 1.2rem; font-weight: bold;"></div>
+            </section>
+        </div>
+    </div>
 
     <!-- Footer -->
     <footer class="footer">
@@ -164,4 +212,120 @@
         </div>
     </footer>
 </body>
+<script>
+// Cart logic
+function getCart() {
+    return JSON.parse(localStorage.getItem('cart') || '[]');
+}
+function setCart(cart) {
+    localStorage.setItem('cart', JSON.stringify(cart));
+}
+function addToCart(product) {
+    let cart = getCart();
+    const existing = cart.find(item => item.name === product.name);
+    if (existing) {
+        existing.qty += 1;
+    } else {
+        cart.push({...product, qty: 1});
+    }
+    setCart(cart);
+}
+function updateCartDisplay() {
+    const cart = getCart();
+    const cartItemsDiv = document.getElementById('cart-items');
+    const cartTotalDiv = document.getElementById('cart-total');
+    if (cart.length === 0) {
+        cartItemsDiv.innerHTML = '<p>Your cart is empty.</p>';
+        cartTotalDiv.textContent = '';
+        return;
+    }
+    let total = 0;
+    cartItemsDiv.innerHTML = cart.map(item => {
+        const itemTotal = item.qty * parseFloat(item.price.replace('$',''));
+        total += itemTotal;
+        return `<div style='margin-bottom:1rem;'><strong>${item.name}</strong> x ${item.qty} - $${itemTotal.toFixed(2)}</div>`;
+    }).join('');
+    cartTotalDiv.textContent = `Total: $${total.toFixed(2)}`;
+}
+// Add to Cart button logic
+const addToCartButtons = document.querySelectorAll('.add-to-cart');
+addToCartButtons.forEach(btn => {
+    btn.addEventListener('click', function() {
+        const card = btn.closest('.product-card');
+        const name = card.querySelector('.product-info h3').textContent;
+        const price = card.querySelector('.price').textContent;
+        addToCart({name, price});
+        alert(`${name} added to cart!`);
+    });
+});
+
+const sections = document.querySelectorAll('.section');
+const accountIcon = document.querySelector('.nav-icons a[href="#account"]');
+const cartIcon = document.querySelector('.nav-icons a[href="#cart"]');
+const navLinks = document.querySelectorAll('.nav-links a');
+
+function showOnlySection(id) {
+    // Only hide/show account and cart, never hide the rest
+    const accountSection = document.getElementById('account');
+    const cartSection = document.getElementById('cart');
+    if (id === 'account') {
+        accountSection.style.display = '';
+        cartSection.style.display = 'none';
+    } else if (id === 'cart') {
+        cartSection.style.display = '';
+        accountSection.style.display = 'none';
+        updateCartDisplay();
+    }
+}
+function showAllSections() {
+    // Always hide account and cart, show the rest
+    document.getElementById('account').style.display = 'none';
+    document.getElementById('cart').style.display = 'none';
+}
+
+// Modal logic
+const accountModal = document.getElementById('account-modal');
+const cartModal = document.getElementById('cart-modal');
+const closeAccountModal = document.getElementById('close-account-modal');
+const closeCartModal = document.getElementById('close-cart-modal');
+
+function openModal(modal) {
+    modal.style.display = 'flex';
+}
+function closeModal(modal) {
+    modal.style.display = 'none';
+}
+
+accountIcon.addEventListener('click', function(e) {
+    e.preventDefault();
+    openModal(accountModal);
+});
+cartIcon.addEventListener('click', function(e) {
+    e.preventDefault();
+    openModal(cartModal);
+    updateCartDisplay();
+});
+closeAccountModal.addEventListener('click', function() {
+    closeModal(accountModal);
+});
+closeCartModal.addEventListener('click', function() {
+    closeModal(cartModal);
+});
+// Close modal when clicking outside content
+accountModal.addEventListener('click', function(e) {
+    if (e.target === accountModal) closeModal(accountModal);
+});
+cartModal.addEventListener('click', function(e) {
+    if (e.target === cartModal) closeModal(cartModal);
+});
+// Hide modals when navigating to other sections
+navLinks.forEach(link => {
+    link.addEventListener('click', function(e) {
+        if (this.getAttribute('href') !== '#cart' && this.getAttribute('href') !== '#account') {
+            closeModal(accountModal);
+            closeModal(cartModal);
+        }
+    });
+});
+</script>
 </html> 

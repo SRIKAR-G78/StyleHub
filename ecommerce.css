@@ -369,3 +369,84 @@ body {
         width: 100%;
     }
 } 
+
+/* Cart Section */
+#cart {
+    background: #f4f4f4;
+    border-radius: 10px;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.08);
+    max-width: 600px;
+    margin: 3rem auto 0 auto;
+    padding: 2.5rem 2rem 2rem 2rem;
+}
+#cart h2 {
+    text-align: center;
+    color: #2c3e50;
+    margin-bottom: 2rem;
+}
+#cart-items {
+    margin-bottom: 2rem;
+}
+#cart-items > div {
+    background: #fff;
+    border-radius: 6px;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.05);
+    padding: 1rem 1.5rem;
+    margin-bottom: 1rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 1rem;
+}
+#cart-total {
+    text-align: right;
+    color: #3498db;
+    font-size: 1.3rem;
+    font-weight: bold;
+}
+#cart p {
+    text-align: center;
+    color: #888;
+    font-size: 1.1rem;
+} 
+
+/* Modal Overlay and Content */
+.modal-overlay {
+    display: none;
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(44, 62, 80, 0.5);
+    z-index: 2000;
+    justify-content: center;
+    align-items: center;
+}
+.modal-content {
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.18);
+    max-width: 500px;
+    width: 90vw;
+    position: relative;
+    animation: modalIn 0.2s;
+}
+@keyframes modalIn {
+    from { transform: translateY(-40px) scale(0.95); opacity: 0; }
+    to { transform: translateY(0) scale(1); opacity: 1; }
+}
+.modal-close {
+    position: absolute;
+    top: 16px;
+    right: 20px;
+    background: none;
+    border: none;
+    font-size: 2rem;
+    color: #888;
+    cursor: pointer;
+    transition: color 0.2s;
+    z-index: 10;
+}
+.modal-close:hover {
+    color: #e74c3c;
+} 
